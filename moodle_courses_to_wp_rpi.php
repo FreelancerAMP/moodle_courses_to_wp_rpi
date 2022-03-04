@@ -23,23 +23,34 @@ class MoodleCoursesToRpi
 
     function moodleCourses($atts)
     {
-        if (!is_wp_error($token = $this->getMoodleToken())) {
+        if (!is_wp_error($token = $this->getMoodleToken()) && !empty($atts)) {
             $url = $this->url_prefix .
-                '/webservice/rest/server.php?wstoken='. $token['token'] .'&wsfunction=core_course_get_courses&moodlewsrestformat=json';
+                '?field=category&value=' . $atts . '&wstoken=' . $token['token'] . '&wsfunction=core_course_get_courses_by_field&moodlewsrestformat=json';
             $response = wp_remote_get($url);
-            if (!is_wp_error($response)){
+            if (!is_wp_error($response)) {
                 $courses = json_decode(wp_remote_retrieve_body($response));
-                foreach ($courses as $course)
-                {
-                    if ($course->shortname == $atts)
-                    {
-                        $display_course = $course;
-                    }
 
+                ?>
+                <div class="course-grid">
+                    <?php
+                    foreach ($courses as $course) {
+                        ?>
+                        <div class="course-article">
+                            <?php if (!empty($course->overviewfiles[0]->fileurl)) ?>
+                            <div class="course-image">
+                                <img src="<?php echo $course->overviewfiles[0]->fileurl . '?token=' . $token ?>" alt="">
+                            </div>
+                            <div class="course-description">
+
+                            </div>
+                            <?php ?>
+
+                        </div>
+                        <?php
+                    }
                     ?>
-                    <div class=""
-<?php
-                }
+                </div>
+                <?php
             }
         }
 
