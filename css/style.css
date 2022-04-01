@@ -1,0 +1,16 @@
+.course-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 5px;
+}
+
+.course-article {
+    border: black solid 1px;
+}
+
+.course-image img {
+    height: 100px;
+}
+.course-button{
+    background: aqua;
+}
