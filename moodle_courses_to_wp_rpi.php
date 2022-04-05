@@ -41,6 +41,8 @@ class MoodleCoursesToRpi
                     <div class="course-grid">
                         <?php
                         foreach ($courses->courses as $course) {
+                            if ($course->endate < time() && !in_array( 'self' , $course->enrollmentmethods))
+                                continue;
                             ?>
                             <div class="course-article">
                                 <div class="course-content">
