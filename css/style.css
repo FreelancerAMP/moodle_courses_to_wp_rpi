@@ -1,16 +1,52 @@
 .course-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-gap: 5px;
+    align-content: space-around;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 15px;
+    max-width: inherit !important;
+    /*TODO: remove if page width problem occur*/
 }
 
 .course-article {
-    border: black solid 1px;
+    box-shadow: 2px 1px 7px rgba(0, 0, 0, 0.2) !important;
+    min-width: 410px;
+    padding: 20px;
+
+}
+.course-content{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    float: left;
+    width: 100%;
+    height: 100%;
+}
+.course-summary{
+    overflow: auto;
+    max-height: 400px;
 }
 
 .course-image img {
-    height: 100px;
+    height: 100%;
+    width:  100%;
+}
+
+.course_flexer{
+    margin: 0 !important;
+    flex: 1 0 auto;
 }
 .course-button{
-    background: aqua;
+    background: #dd007e;
+    margin: 10px auto;
+    margin-bottom: 15px;
+    padding: 5px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: white;
+}
+
+@media (max-width: 800px) {
+    .course-grid{
+        grid-template-columns: 1fr;
+    }
 }
