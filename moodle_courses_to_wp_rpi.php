@@ -11,6 +11,15 @@ include_once 'moodle_courses_acf_register.php';
  */
 class MoodleCoursesToRpi
 {
+    public static $replacment = [
+        '{{display_name}}',
+        '{{image_url}}',
+        '{{full_name}}',
+        '{{organisation}}',
+        '{{summary}}',
+        '{{course_url}}'
+    ];
+
     function __construct()
     {
         add_shortcode('moodle_courses', array($this, 'moodleCourses'));
@@ -37,18 +46,40 @@ class MoodleCoursesToRpi
                 if (!is_wp_error($response)) {
                     $courses = json_decode(wp_remote_retrieve_body($response));
                     ob_start();
+                    if (($style = get_option('options_moodle_courses_custom_styles')) && get_option('options_moodle_courses_custom_template_toggle')) {
+                        echo "<style> " . $style . "</style>";
+                    }
                     ?>
                     <div class="course-grid">
                         <?php
+                        if (($template_exists = get_option('options_moodle_courses_custom_template')) && get_option('options_moodle_courses_custom_template_toggle')) {
+                            $custom_template = $template_exists;
+                        } else {
+                            if ($template_exists = locate_template('moodle_courses_to_wp_rpi')) {
+                                $template = $template_exists;
+                            } else {
+                                $template = dirname(__FILE__) . '/templates/courses.php';
+                            }
+                        }
                         foreach ($courses->courses as $course) {
                             if ($course->endate < time() && !in_array('self', $course->enrollmentmethods))
                                 continue;
                             set_query_var('course', $course);
                             set_query_var('token', $token);
-                            if ($template = locate_template('moodle_courses_to_wp_rpi')) {
-                                load_template($template);
+                            if (isset($custom_template)) {
+                                echo str_replace(
+                                    MoodleCoursesToRpi::$replacment,
+                                    [
+                                        $course->displayname,
+                                        $course->overviewfiles[0]->fileurl . '?token=' . $token->token,
+                                        $course->fullname,
+                                        $course->categoryname,
+                                        $course->summary,
+                                        get_option('options_moodle_courses_url') . '/course/view.php?id=' . $course->id
+                                    ],
+                                    $custom_template);
                             } else {
-                                load_template(dirname(__FILE__) . '/templates/courses.php', false);
+                                load_template($template, false);
                             }
                         }
                         ?>
